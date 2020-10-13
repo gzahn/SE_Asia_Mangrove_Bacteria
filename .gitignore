@@ -1,2 +1,9 @@
-Taxonomy
-Data/Seqs
+./Taxonomy
+./Data/Avicenia_alba/Seqs
+./Data/Sonneratia_alba/Seqs
+./Output/run1
+./Output/run2
+./Output/run3
+./Output/run4
+.Rproj.user
+.Rhistory
