@@ -24,13 +24,13 @@ source("./R/plot_bar2.R")
 
 # Grab ps objects (and add identifier)
 ps06 <- readRDS("./Output/run6/noncontam_ps_object.RDS")
-ps12@sam_data$IlluminaRun <- "1912KMI-0006"
+ps06@sam_data$IlluminaRun <- "1912KMI-0006"
 ps07 <- readRDS("./Output/run7/noncontam_ps_object.RDS")
-ps12@sam_data$IlluminaRun <- "1912KMI-0007"
+ps07@sam_data$IlluminaRun <- "1912KMI-0007"
 ps12 <- readRDS("./Output/run12/noncontam_ps_object.RDS")
 ps12@sam_data$IlluminaRun <- "1912KMI-0012"
 ps13 <- readRDS("./Output/run13/noncontam_ps_object.RDS")
-ps12@sam_data$IlluminaRun <- "1912KMI-0013"
+ps13@sam_data$IlluminaRun <- "1912KMI-0013"
 
 
 # merge phyloseq objects from all 4 runs
@@ -45,6 +45,10 @@ full_ps %>% merge_samples("Structure") %>%
 ggsave("./Output/Figs/Overall_Raw_Kingdom-Level_Assignments.png")
 
 # Clean up taxa and any empty samples ####
+
+# remove taxa with reads longer than 300bp
+full_ps <- subset_taxa(full_ps, 
+                       full_ps %>% otu_table() %>% colnames() %>% nchar() == 300)
 
 # remove non-bacteria
 full_ps <- 
@@ -116,3 +120,5 @@ plot(sort(specnumber(otu_table(full_ps)),decreasing = TRUE),
      main="ESV Richness by Sample",ylab="ESV Richness")
 dev.off()
 
+# alert that script is finished with beep
+beepr::beep(sound=8)

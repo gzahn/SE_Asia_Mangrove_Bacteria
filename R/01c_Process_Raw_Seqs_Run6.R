@@ -74,8 +74,8 @@ rm(SA_meta); rm(full_meta); rm(gps); rm(lat); rm(lon) # quick cleanup of environ
 
 
 # Peek at quality profiles
-plotQualityProfile(fnFs[c(1,30)]) # fwd reads
-plotQualityProfile(fnRs[c(1,30)]) # rev reads
+# plotQualityProfile(fnFs[c(1,30)]) # fwd reads
+# plotQualityProfile(fnRs[c(1,30)]) # rev reads
 
 # Make filtered outfile names
 filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
