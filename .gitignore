@@ -1,3 +1,7 @@
+./Taxonomy/silva_species_assignment_v138.fa.gz
+./Taxonomy/rdp_train_set_16.fa.gz
+./Taxonomy/silva_nr99_v138_train_set.fa.gz
+./Taxonomy/rdp_species_assignment_16.fa.gz
 ./Taxonomy/
 ./Data/Avicenia_alba/Seqs/
 ./Data/Sonneratia_alba/Seqs/
