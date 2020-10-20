@@ -9,6 +9,7 @@
 ##  phyloseq v 1.32.0                                    ##
 ##  vegan v 2.5.6                                        ##
 ##  VennDiagram v 1.6.20                                 ##
+##  patchwork v 1.0.1                                    ##
 ##                                                       ##
 ##  ###################################################  ##
 
@@ -17,9 +18,14 @@ library(tidyverse); packageVersion("tidyverse")
 library(phyloseq); packageVersion("phyloseq")
 library(vegan); packageVersion("vegan")
 library(VennDiagram); packageVersion("VennDiagram")
+library(patchwork); packageVersion("patchwork")
+
+# custom palette
+pal <- c("#d98416","#25802d","#664c13","#858585")
+# names(pal) <- c("f","l","p","s")
 
 # Load ps object with tree ####
-ps <- readRDS("./Output/full_ps_object_w_tree.RDS")
+full_ps <- readRDS("./Output/full_cleaned_ps_object_w_tree.RDS")
 
 # Look at ESV overlap (raw reads) ####
 # find ESVs shared between Illumina runs
@@ -121,9 +127,49 @@ png("./Output/Figs/VennDiagram_Shared_Genus-Level_Taxa_by_Structure.png")
 grid.draw(venn.plot2)
 dev.off()
 
-#  ####
+# Save genus-level-glom object ####
 
 # output genus-level ps_object for convenience
 saveRDS(full_ps_genus, "./Output/full_ps_object_w_tree_genus-glom.RDS")
 
 
+# Explore phylogenetic tree ####
+full_ps_genus@sam_data$Structure %>% unique()
+# colored by phylum (blanks removed)
+full_ps_genus %>% 
+  subset_samples(Structure != "Blank") %>% 
+  plot_tree(ladderize="left", color="Structure") +
+    scale_color_viridis_d()
+
+p1 <- full_ps_genus %>% 
+  subset_samples(Structure == "Fruit") %>% 
+  plot_tree(ladderize="left", color="Structure") +
+  scale_color_manual(values = pal[1]) +
+  theme(legend.position = "none") +
+  ggtitle("Fruit")
+
+p2 <- full_ps_genus %>% 
+  subset_samples(Structure == "Leaf") %>% 
+  plot_tree(ladderize="left", color="Structure") +
+  scale_color_manual(values = pal[2]) +
+  theme(legend.position = "none") +
+  ggtitle("Leaf")
+
+p3 <- full_ps_genus %>% 
+  subset_samples(Structure == "Pneumatophore") %>% 
+  plot_tree(ladderize="left", color="Structure") +
+  scale_color_manual(values = pal[3]) +
+  theme(legend.position = "none") +
+  ggtitle("Pneumatophore")
+
+p4 <- full_ps_genus %>% 
+  subset_samples(Structure == "Sediment") %>% 
+  plot_tree(ladderize="left", color="Structure") +
+  scale_color_manual(values = pal[4]) +
+  theme(legend.position = "none") +
+  ggtitle("Sediment")
+
+(p1+p2) / (p3+p4)
+ggsave("./Output/Figs/Phylogenetic_Dispersion_by_Plant_Structure.png",dpi=300)
+
+rm(p1);rm(p2);rm(p3);rm(p4)

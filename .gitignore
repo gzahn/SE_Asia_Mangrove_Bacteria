@@ -5,6 +5,7 @@
 ./Taxonomy/
 ./Data/Avicenia_alba/Seqs/
 ./Data/Sonneratia_alba/Seqs/
+./Output/Trees/*
 *ddFs.RDS
 *ddRs.RDS
 *errF.RDS
