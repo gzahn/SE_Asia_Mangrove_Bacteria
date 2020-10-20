@@ -80,6 +80,7 @@ full_ps <-
 saveRDS(full_ps, "./Output/full_ps_object_cleaned.RDS")
 
 
+
 # Summary plots ####
 
 # Plot of taxon-level assignment efficiency 
@@ -122,3 +123,5 @@ dev.off()
 
 # alert that script is finished with beep
 beepr::beep(sound=8)
+
+
