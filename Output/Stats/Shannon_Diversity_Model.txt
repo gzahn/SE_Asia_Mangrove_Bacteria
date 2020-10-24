@@ -1,5 +1,7 @@
+
+> summary(shannon_mod)
 Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmerTest']
-Formula: Shannon ~ Species * Structure + (1 | Location)
+Formula: Shannon ~ Species * Structure * (1 | Location)
    Data: meta
 
 REML criterion at convergence: 881.8
@@ -16,30 +18,34 @@ Number of obs: 469, groups:  Location, 10
 
 Fixed effects:
                                                Estimate Std. Error        df t value Pr(>|t|)    
-(Intercept)                                     0.97301    0.09454  50.19544  10.292 5.77e-14 ***
-SpeciesSonneratia alba                         -0.32393    0.16863 443.18802  -1.921 0.055380 .  
-StructureLeaf                                   0.16282    0.10940 451.51142   1.488 0.137395    
-StructurePneumatophore                          0.77249    0.10672 451.84410   7.239 1.96e-12 ***
-StructureSediment                               1.22814    0.10671 451.80229  11.509  < 2e-16 ***
-SpeciesSonneratia alba:StructureLeaf           -0.09763    0.25191 458.14529  -0.388 0.698517    
-SpeciesSonneratia alba:StructurePneumatophore   0.71000    0.18983 458.07949   3.740 0.000207 ***
-SpeciesSonneratia alba:StructureSediment        1.12475    0.18979 458.01683   5.926 6.10e-09 ***
+(Intercept)                                     2.20115    0.08947  41.18507  24.602  < 2e-16 ***
+SpeciesSonneratia alba                          0.80082    0.09939 452.78742   8.058 6.97e-15 ***
+StructureFruit                                 -1.22814    0.10671 451.80229 -11.509  < 2e-16 ***
+StructureLeaf                                  -1.06532    0.10526 451.50198 -10.121  < 2e-16 ***
+StructurePneumatophore                         -0.45565    0.10233 451.00910  -4.453 1.07e-05 ***
+SpeciesSonneratia alba:StructureFruit          -1.12475    0.18979 458.01683  -5.926 6.10e-09 ***
+SpeciesSonneratia alba:StructureLeaf           -1.22238    0.21450 456.63638  -5.699 2.17e-08 ***
+SpeciesSonneratia alba:StructurePneumatophore  -0.41475    0.13600 450.98041  -3.050  0.00243 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
-            (Intr) SpcsSa StrctL StrctP StrctS SSa:SL SSa:SP
-SpcsSnnrtal -0.446                                          
-StructureLf -0.594  0.333                                   
-StrctrPnmtp -0.611  0.343  0.526                            
-StrctrSdmnt -0.611  0.342  0.526  0.540                     
-SpcsSalb:SL  0.277 -0.641 -0.433 -0.229 -0.229              
-SpcsSalb:SP  0.367 -0.853 -0.296 -0.561 -0.303  0.559       
-SpcsSalb:SS  0.367 -0.853 -0.296 -0.303 -0.561  0.559  0.743
+            (Intr) SpcsSa StrctF StrctL StrctP SSa:SF SSa:SL
+SpcsSnnrtal -0.643                                          
+StructurFrt -0.547  0.491                                   
+StructureLf -0.556  0.499  0.467                            
+StrctrPnmtp -0.572  0.515  0.479  0.486                     
+SpcsSalb:SF  0.281 -0.463 -0.561 -0.262 -0.269              
+SpcsSalb:SL  0.272 -0.433 -0.228 -0.488 -0.238  0.228       
+SpcsSalb:SP  0.430 -0.684 -0.361 -0.366 -0.752  0.358  0.317
+
+> anova(shannon_mod)
 Type III Analysis of Variance Table with Satterthwaite's method
                    Sum Sq Mean Sq NumDF  DenDF  F value    Pr(>F)    
 Species             0.730   0.730     1 349.12   2.0207    0.1561    
-Structure         176.684  58.895     3 455.96 163.0704 < 2.2e-16 ***
-Species:Structure  19.892   6.631     3 455.63  18.3598 2.919e-11 ***
+Structure         176.684  58.895     3 456.38 163.0704 < 2.2e-16 ***
+Species:Structure  19.892   6.631     3 455.98  18.3598 2.916e-11 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> sink(NULL)

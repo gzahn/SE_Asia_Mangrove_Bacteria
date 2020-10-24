@@ -12,6 +12,8 @@
 ##  patchwork v 1.0.1                                    ##
 ##  microbiome v 1.10.0                                  ##
 ##  purrr v 0.3.4                                        ##
+##  corncob v 0.1.0                                      ##
+##  indicspecies v 1.7.9                                 ##
 ##                                                       ##
 ##  ###################################################  ##
 
@@ -23,6 +25,10 @@ library(patchwork); packageVersion("patchwork")
 library(microbiome); packageVersion("microbiome")
 library(broom); packageVersion("broom")
 library(purrr); packageVersion("purrr")
+library(corncob); packageVersion("corncob")
+library(indicspecies); packageVersion("indicspecies")
+
+source("./R/bbdml_helper.R")
 
 # custom palette
 pal <- c("#d98416","#25802d","#664c13","#858585")
@@ -52,6 +58,7 @@ unifrac.dist <- UniFrac(ps_genus,weighted = TRUE,normalized = TRUE,parallel = TR
 
 glimpse(sample_data(ps_genus))
 ps_genus@sam_data$Structure %>% unique()
+set.seed(123)
 ordu <- ps_genus %>% 
   transform_sample_counts(function(x){x/sum(x)}) %>% 
   ordinate("PCoA","unifrac", weighted=TRUE)
@@ -121,7 +128,122 @@ perm_df %>%
 
 simp <- simper(otu_table(ps_ra),group = ps_ra@sam_data$Structure)
 saveRDS(simp,"./Output/simper_structure.RDS")
-map(simp,"overall")
+map_dbl(simp,"overall")
 summary(simp)
 
-# Indicator species? ####
+# Indicator species analysis for different plant structures ####
+
+# set up clusters by Structure
+clusters <- rownames(ps_ra@otu_table) %>% str_split("_") %>% map_chr(3)
+# convert to matrix
+OTU = as(otu_table(ps_ra), "matrix")
+
+# find indicator species for each plant part
+flower <- indicators(OTU,cluster = clusters,group = "Fr",verbose = TRUE,func = "IndVal.g",At=.5,Bt=.2)
+saveRDS(flower,"./Output/indic_flower.RDS")
+leaf <- indicators(OTU,cluster = clusters,group = "Le",verbose = TRUE,func = "IndVal.g",At=.5,Bt=.2)
+saveRDS(leaf,"./Output/indic_leaf.RDS")
+pneumatophore <- indicators(OTU,cluster = clusters,group = "Pn",verbose = TRUE,func = "IndVal.g",At=.5,Bt=.2)
+saveRDS(pneumatophore,"./Output/indic_pneumatophore.RDS")
+
+leaf_indics <- as.data.frame(ps_ra@tax_table[leaf$finalsplist,2:6])
+flower_indics <- as.data.frame(ps_ra@tax_table[flower$finalsplist,2:6])
+pneumatophore_indics <- as.data.frame(ps_ra@tax_table[pneumatophore$finalsplist,2:6])
+
+# CoRNCOB differential abundance analysis ####
+
+set.seed(123)
+da_analysis <- differentialTest(formula = ~ Structure, #abundance
+                                phi.formula = ~ Structure, #dispersion
+                                formula_null = ~ 1, #mean
+                                phi.formula_null = ~ 1,
+                                test = "Wald", boot = FALSE,
+                                data = ps_genus,
+                                fdr_cutoff = 0.05)
+
+length(da_analysis$significant_models)
+
+set.seed(123)
+bbdml_obj <- multi_bbdml(da_analysis,
+                           ps_object = ps_genus,
+                           mu_predictor = "Structure",
+                           phi_predictor = "Structure",
+                           taxlevels = 2:6)
+length(bbdml_obj)
+saveRDS(bbdml_obj,"./Output/bbdml_Structure.RDS")
+
+# find corncob diffabund taxa that were also found by indicspecies
+indic_species_list <- unique(c(leaf_indics$Genus,flower_indics$Genus,pneumatophore_indics$Genus))
+found_by_both <- which(str_split(names(bbdml_obj),"_") %>% map_chr(5) %in% indic_species_list)
+
+# generate bbdml plots
+plot_multi_bbdml(bbdml_list = bbdml_obj[found_by_both],
+                   color = "Structure",
+                   pointsize = 3)
+
+#  Compose bbdml plots ####
+scaleFUN <- function(x) sprintf("%.2f", x)
+
+bbdml_plot_1 <- bbdml_plot_1 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "none",
+        legend.text = element_text(size=16,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal)
+
+bbdml_plot_2 <- bbdml_plot_2 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "none",
+        legend.text = element_text(size=16,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal)
+bbdml_plot_3 <- bbdml_plot_3 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "none",
+        legend.text = element_text(size=16,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal)
+bbdml_plot_4 <- bbdml_plot_4 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "none",
+        legend.text = element_text(size=16,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal)
+bbdml_plot_5 <- bbdml_plot_5 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "none",
+        legend.text = element_text(size=16,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal)
+bbdml_plot_6 <- bbdml_plot_6 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "none",
+        legend.text = element_text(size=16,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal)
+bbdml_plot_7 <- bbdml_plot_7 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "none",
+        legend.text = element_text(size=16,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal)
+bbdml_plot_8 <- bbdml_plot_8 + scale_y_continuous(labels=scaleFUN) +
+  theme(axis.text.x = element_blank(),panel.grid = element_blank(),
+        legend.title = element_text(size=18,face="bold"), legend.position = "bottom", legend.key.size = unit(.5,units = "in"),
+        legend.text = element_text(size=14,face="bold"),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size=10,face="bold")) +
+  scale_color_manual(values=pal) + labs(color="Sample source: ")
+
+bbdml_plot_1 / bbdml_plot_2 / bbdml_plot_3 / bbdml_plot_4 / bbdml_plot_5 / bbdml_plot_6 / bbdml_plot_7 / bbdml_plot_8
+ggsave("./Output/Figs/Differentially-Abundant_Taxa_bbdml_plots.png",dpi=300,height = 12,width = 10)
+
+# plot DA analysis
+plot(da_analysis)
