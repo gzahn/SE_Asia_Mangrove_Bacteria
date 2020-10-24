@@ -11,6 +11,7 @@
 ##  broom v 0.7.1                                        ##
 ##  patchwork v 1.0.1                                    ##
 ##  microbiome v 1.10.0                                  ##
+##  purrr v 0.3.4                                        ##
 ##                                                       ##
 ##  ###################################################  ##
 
@@ -21,16 +22,17 @@ library(vegan); packageVersion("vegan")
 library(patchwork); packageVersion("patchwork")
 library(microbiome); packageVersion("microbiome")
 library(broom); packageVersion("broom")
+library(purrr); packageVersion("purrr")
 
 # custom palette
 pal <- c("#d98416","#25802d","#664c13","#858585")
 
 # Load ps object glom by genus, and clean up a bit
-ps <- readRDS("./Output/full_cleaned_ps_object_w_tree.RDS")
-ps_genus <- ps %>% tax_glom("Genus")
+ps_genus <- readRDS("./Output/full_ps_object_w_tree_genus-glom.RDS")
 ps_genus <- ps_genus %>% subset_taxa(taxa_sums(ps_genus)>0)
 ps_genus <- ps_genus %>% subset_samples(sample_sums(ps_genus)>0)
 ps_genus <- ps_genus %>% subset_samples(Structure != "Blank")
+saveRDS(ps_genus,"./Output/full_ps_object_w_tree_genus-glom.RDS")
 
 
 # MANTEL TEST ####
@@ -45,6 +47,7 @@ sink(NULL)
 
 
 # Beta-diversity distances and ordinations ####
+set.seed(123)
 unifrac.dist <- UniFrac(ps_genus,weighted = TRUE,normalized = TRUE,parallel = TRUE)
 
 glimpse(sample_data(ps_genus))
@@ -112,3 +115,13 @@ perm_df %>%
   filter(!term %in% c("Total","Residuals")) %>% 
   mutate(across(where(is.numeric),function(x){round(x,3)})) %>% 
   write_csv("./Output/Stats/PermANOVA_model_terms_tidy.csv")
+
+
+# What genera are driving differences? ####
+
+simp <- simper(otu_table(ps_ra),group = ps_ra@sam_data$Structure)
+saveRDS(simp,"./Output/simper_structure.RDS")
+map(simp,"overall")
+summary(simp)
+
+# Indicator species? ####

@@ -1,0 +1,45 @@
+Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: Shannon ~ Species * Structure + (1 | Location)
+   Data: meta
+
+REML criterion at convergence: 881.8
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.4710 -0.5804  0.0567  0.6804  2.4662 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Location (Intercept) 0.02351  0.1533  
+ Residual             0.36116  0.6010  
+Number of obs: 469, groups:  Location, 10
+
+Fixed effects:
+                                               Estimate Std. Error        df t value Pr(>|t|)    
+(Intercept)                                     0.97301    0.09454  50.19544  10.292 5.77e-14 ***
+SpeciesSonneratia alba                         -0.32393    0.16863 443.18802  -1.921 0.055380 .  
+StructureLeaf                                   0.16282    0.10940 451.51142   1.488 0.137395    
+StructurePneumatophore                          0.77249    0.10672 451.84410   7.239 1.96e-12 ***
+StructureSediment                               1.22814    0.10671 451.80229  11.509  < 2e-16 ***
+SpeciesSonneratia alba:StructureLeaf           -0.09763    0.25191 458.14529  -0.388 0.698517    
+SpeciesSonneratia alba:StructurePneumatophore   0.71000    0.18983 458.07949   3.740 0.000207 ***
+SpeciesSonneratia alba:StructureSediment        1.12475    0.18979 458.01683   5.926 6.10e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) SpcsSa StrctL StrctP StrctS SSa:SL SSa:SP
+SpcsSnnrtal -0.446                                          
+StructureLf -0.594  0.333                                   
+StrctrPnmtp -0.611  0.343  0.526                            
+StrctrSdmnt -0.611  0.342  0.526  0.540                     
+SpcsSalb:SL  0.277 -0.641 -0.433 -0.229 -0.229              
+SpcsSalb:SP  0.367 -0.853 -0.296 -0.561 -0.303  0.559       
+SpcsSalb:SS  0.367 -0.853 -0.296 -0.303 -0.561  0.559  0.743
+Type III Analysis of Variance Table with Satterthwaite's method
+                   Sum Sq Mean Sq NumDF  DenDF  F value    Pr(>F)    
+Species             0.730   0.730     1 349.12   2.0207    0.1561    
+Structure         176.684  58.895     3 455.96 163.0704 < 2.2e-16 ***
+Species:Structure  19.892   6.631     3 455.63  18.3598 2.919e-11 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

@@ -42,21 +42,22 @@ ps06names <- ps06 %>% otu_table() %>% colnames()
 ps07names <- ps07 %>% otu_table() %>% colnames()
 ps12names <- ps12 %>% otu_table() %>% colnames()
 ps13names <- ps13 %>% otu_table() %>% colnames()
-sum(ps06names %in% ps07names)
-sum(ps06names %in% ps12names)
-sum(ps06names %in% ps13names)
-sum(ps07names %in% ps12names)
-sum(ps07names %in% ps13names)
-sum(ps12names %in% ps13names)
+
 # clean up
 rm(list = c("ps06","ps07","ps12","ps13","ps06names","ps07names","ps12names","ps13names"))
 
 # agglomerate taxa at genus level ####
 full_ps_genus <- tax_glom(full_ps,"Genus")
+full_ps_genus <- full_ps_genus %>% subset_taxa(taxa_sums(ps_genus)>0)
+full_ps_genus <- full_ps_genus %>% subset_samples(sample_sums(ps_genus)>0)
+full_ps_genus <- full_ps_genus %>% subset_samples(Structure != "Blank")
+# output genus-level ps_object for convenience
+saveRDS(full_ps_genus, "./Output/full_ps_object_w_tree_genus-glom.RDS")
 
 
 
-# Look again at overlap (at genus level) and build venn diagram of overlap by IlluminaRun ####
+
+# Venn diagram of overlap by IlluminaRun ####
 A <- full_ps_genus %>% subset_samples(IlluminaRun == "1912KMI-0006") %>% 
   subset_taxa(taxa_sums(full_ps_genus %>% subset_samples(IlluminaRun == "1912KMI-0006"))>0) %>% tax_table() %>% row.names()
 B <- full_ps_genus %>% subset_samples(IlluminaRun == "1912KMI-0007") %>% 
@@ -92,7 +93,7 @@ grid.draw(venn.plot)
 dev.off()
 
 
-# Same VennDiagram, but for Plant Parts ####
+# VennDiagram of overlap for Plant Structure ####
 
 A <- full_ps_genus %>% subset_samples(Structure == "Fruit") %>% 
   subset_taxa(taxa_sums(full_ps_genus %>% subset_samples(Structure == "Fruit"))>0) %>% tax_table() %>% row.names()
@@ -127,10 +128,6 @@ png("./Output/Figs/VennDiagram_Shared_Genus-Level_Taxa_by_Structure.png")
 grid.draw(venn.plot2)
 dev.off()
 
-# Save genus-level-glom object ####
-
-# output genus-level ps_object for convenience
-saveRDS(full_ps_genus, "./Output/full_ps_object_w_tree_genus-glom.RDS")
 
 
 # Explore phylogenetic tree ####
