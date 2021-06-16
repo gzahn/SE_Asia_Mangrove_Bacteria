@@ -64,7 +64,7 @@ sink(NULL)
 
 # Plot alpha diversity ####
 plot_richness(ps_genus, x="Structure", measures=c("Shannon")) +
-  geom_boxplot(alpha=0) +
+  geom_boxplot(alpha=0.5,aes(fill=Structure)) +
   facet_wrap(~Species) +
   theme_bw() +
   theme(strip.text = element_text(face="bold.italic",size=12),
@@ -72,12 +72,13 @@ plot_richness(ps_genus, x="Structure", measures=c("Shannon")) +
         axis.title = element_text(size=14,face="bold"),
         strip.background = element_blank(),
         axis.text = element_text(face="bold")) +
-  labs(y="Shannon diversity")
+  labs(y="Shannon diversity") +
+  scale_fill_manual(values=pal)
 ggsave("./Output/Figs/Shannon_Diversity_genus-glom_by_Structure_and_Species.png",
        dpi=300,height = 6,width = 6)
 
 plot_richness(ps_genus, x="Location", measures=c("Shannon")) +
-  geom_boxplot(alpha=0) +
+  geom_boxplot(alpha=0.5,aes(fill=Structure)) +
   facet_wrap(~Species) +
   theme_bw() +
   theme(strip.text = element_text(face="bold.italic",size=12),
@@ -85,7 +86,8 @@ plot_richness(ps_genus, x="Location", measures=c("Shannon")) +
         axis.title = element_text(size=14,face="bold"),
         strip.background = element_blank(),
         axis.text = element_text(face="bold")) +
-  labs(y="Shannon diversity")
+  labs(y="Shannon diversity") +
+  scale_fill_manual(values=pal)
 ggsave("./Output/Figs/Shannon_Diversity_genus-glom_by_Location.png",
        dpi=300,height = 6,width = 6)
 
@@ -179,7 +181,7 @@ phylum_ra_df_long %>%
           legend.text = element_text(size=10,face="bold"),
           axis.title = element_text(size=14,face="bold"),
           axis.text.x = element_text(angle=60,hjust=1,size=10)) +
-  labs(y="Relative abundance",caption = "Phyla with highest abundance in plants, not sediment")
+  labs(y="Relative abundance",caption = "Phyla with highest relative abundance in plants, not sediment")
 ggsave("./Output/Figs/Most_abundant_phyla_boxplot_by_Structure.png",dpi=300,height = 8,width = 12)
 
 

@@ -247,3 +247,89 @@ ggsave("./Output/Figs/Differentially-Abundant_Taxa_bbdml_plots.png",dpi=300,heig
 
 # plot DA analysis
 plot(da_analysis)
+
+
+
+# Which taxa are found in mangroves but NOT in sediment? ####
+
+# for entire study...
+ps <- ps %>% subset_samples(Structure != "Blank")
+
+# add t/f column for whether sample is plant or not
+plant <- ps %>% 
+  meta %>% 
+  mutate(Plant = case_when(Structure == "Sediment" ~ FALSE,
+                           Structure != "Sediment" ~ TRUE))
+ps@sam_data$Plant <- plant$Plant
+
+# separate ps objects
+sediment <- ps %>% 
+  subset_samples(Structure == "Sediment")
+sediment <- sediment %>% 
+  subset_taxa(taxa_sums(sediment) > 0)
+  
+plant <- ps %>% 
+  subset_samples(Structure != "Sediment")
+plant <- plant %>% 
+  subset_taxa(taxa_sums(plant) > 0)
+
+
+# N sediment taxa found in plants
+taxa_names(sediment) %in% taxa_names(plant) %>% sum()
+ntaxa(plant)
+taxa_names(plant) %in% taxa_names(sediment) %>% sum()
+
+
+
+# for each sampling location, individually...
+locations <- meta(plant)$Location %>% unique()
+
+taxa_by_loc_plant <- list()
+plant@sam_data
+for(i in 1:length(locations)){
+  x <- plant %>% 
+    subset_samples(Location == locations[i]) 
+  taxa_by_loc_plant[[i]] <- x %>% 
+    subset_taxa(taxa_sums(x) > 0) %>% 
+    taxa_names()
+}
+
+taxa_by_loc_sediment <- list()
+
+for(i in 1:length(locations)){
+  x <- sediment %>% 
+    subset_samples(Location == locations[i]) 
+  taxa_by_loc_sediment[[i]] <- x %>% 
+    subset_taxa(taxa_sums(x) > 0) %>% 
+    taxa_names()
+}
+
+
+
+# write function to compare taxa names by site between plant and sediment lists
+
+num_taxa_by_loc <- list()
+for(i in 1:length(locations)){
+num_taxa_by_loc[[i]] <- taxa_by_loc_plant[[i]] %in% taxa_by_loc_sediment[[i]]
+}
+
+
+taxa_numbers <- data.frame(
+  plant = lapply(taxa_by_loc_plant, length) %>% unlist(),  
+  sediment = lapply(taxa_by_loc_sediment, length) %>% unlist(),
+  shared_w_sediment = lapply(num_taxa_by_loc,sum) %>% unlist(),
+  row.names = locations
+)
+taxa_numbers
+write_csv(taxa_numbers, "./Output/Stats/taxa_numbers_plant_vs_sediment_by_location.csv")
+
+# every taxon seen in a plant was found in sediment from the same sites!?
+ps@sam_data$Location %>% unique
+
+leaf <- ps %>% subset_samples(Structure == "Leaf" & Location == "Chek Jawa") %>% 
+  subset_taxa(taxa_sums(ps %>% subset_samples(Structure == "Leaf" & Location == "Chek Jawa"))>0) %>% tax_table() %>% row.names()
+  
+sediment <- ps %>% subset_samples(Structure == "Sediment" & Location == "Chek Jawa") %>% 
+  subset_taxa(taxa_sums(ps %>% subset_samples(Structure == "Sediment" & Location == "Chek Jawa"))>0) %>% tax_table() %>% row.names()
+
+leaf %in% sediment %>% sum

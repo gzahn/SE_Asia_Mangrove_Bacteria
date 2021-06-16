@@ -122,7 +122,8 @@ venn.plot2 <- draw.quad.venn(area1=length((A)),
                             area3=length((C)),
                             area4=length((D)),
                             n12,n13,n14,n23,n24,n34,n123,n124,n134,n234,n1234,
-                            category = c("Fruit","Leaf","Pneumatophore","Sediment"))
+                            category = c("Fruit","Leaf","Pneumatophore","Sediment"),
+                            fill=pal)
 dev.off()
 png("./Output/Figs/VennDiagram_Shared_Genus-Level_Taxa_by_Structure.png")
 grid.draw(venn.plot2)
@@ -170,3 +171,80 @@ p4 <- full_ps_genus %>%
 ggsave("./Output/Figs/Phylogenetic_Dispersion_by_Plant_Structure.png",dpi=300)
 
 rm(p1);rm(p2);rm(p3);rm(p4)
+
+
+
+# VennDiagram at ASV level
+
+A <- full_ps %>% subset_samples(Structure == "Fruit") %>% 
+  subset_taxa(taxa_sums(full_ps %>% subset_samples(Structure == "Fruit"))>0) %>% tax_table() %>% row.names()
+B <- full_ps %>% subset_samples(Structure == "Leaf") %>% 
+  subset_taxa(taxa_sums(full_ps %>% subset_samples(Structure == "Leaf"))>0) %>% tax_table() %>% row.names()
+C <- full_ps %>% subset_samples(Structure == "Pneumatophore") %>% 
+  subset_taxa(taxa_sums(full_ps %>% subset_samples(Structure == "Pneumatophore"))>0) %>% tax_table() %>% row.names()
+D <- full_ps %>% subset_samples(Structure == "Sediment") %>% 
+  subset_taxa(taxa_sums(full_ps %>% subset_samples(Structure == "Sediment"))>0) %>% tax_table() %>% row.names()
+
+full <- unique(c(A,B,C,D))
+n12 <- sum(full %in% unique(A) & full %in% unique(B))
+n13 <- sum(full %in% unique(A) & full %in% unique(C))
+n14 <- sum(full %in% unique(A) & full %in% unique(D))
+n23 <- sum(full %in% unique(B) & full %in% unique(C))
+n24 <- sum(full %in% unique(B) & full %in% unique(D))
+n34 <- sum(full %in% unique(C) & full %in% unique(D))
+n123 <- sum(full %in% unique(A) & full %in% unique(B) & full %in% unique(C))
+n124 <- sum(full %in% unique(A) & full %in% unique(B) & full %in% unique(D))
+n134 <- sum(full %in% unique(A) & full %in% unique(C) & full %in% unique(D))
+n234 <- sum(full %in% unique(B) & full %in% unique(C) & full %in% unique(D))
+n1234 <- sum(full %in% unique(A) & full %in% unique(B) & full %in% unique(C) & full %in% unique(D))
+
+venn.plot2 <- draw.quad.venn(area1=length((A)),
+                             area2=length((B)),
+                             area3=length((C)),
+                             area4=length((D)),
+                             n12,n13,n14,n23,n24,n34,n123,n124,n134,n234,n1234,
+                             category = c("Fruit","Leaf","Pneumatophore","Sediment"),
+                             fill=pal)
+dev.off()
+png("./Output/Figs/VennDiagram_Shared_ASV-Level_Taxa_by_Structure.png")
+grid.draw(venn.plot2)
+dev.off()
+
+
+full_ps_spp <- tax_glom(full_ps,c("Genus","Species"))
+
+# VennDiagram at Species level
+
+A <- full_ps_spp %>% subset_samples(Structure == "Fruit") %>% 
+  subset_taxa(taxa_sums(full_ps_spp %>% subset_samples(Structure == "Fruit"))>0) %>% tax_table() %>% row.names()
+B <- full_ps_spp %>% subset_samples(Structure == "Leaf") %>% 
+  subset_taxa(taxa_sums(full_ps_spp %>% subset_samples(Structure == "Leaf"))>0) %>% tax_table() %>% row.names()
+C <- full_ps_spp %>% subset_samples(Structure == "Pneumatophore") %>% 
+  subset_taxa(taxa_sums(full_ps_spp %>% subset_samples(Structure == "Pneumatophore"))>0) %>% tax_table() %>% row.names()
+D <- full_ps_spp %>% subset_samples(Structure == "Sediment") %>% 
+  subset_taxa(taxa_sums(full_ps_spp %>% subset_samples(Structure == "Sediment"))>0) %>% tax_table() %>% row.names()
+
+full <- unique(c(A,B,C,D))
+n12 <- sum(full %in% unique(A) & full %in% unique(B))
+n13 <- sum(full %in% unique(A) & full %in% unique(C))
+n14 <- sum(full %in% unique(A) & full %in% unique(D))
+n23 <- sum(full %in% unique(B) & full %in% unique(C))
+n24 <- sum(full %in% unique(B) & full %in% unique(D))
+n34 <- sum(full %in% unique(C) & full %in% unique(D))
+n123 <- sum(full %in% unique(A) & full %in% unique(B) & full %in% unique(C))
+n124 <- sum(full %in% unique(A) & full %in% unique(B) & full %in% unique(D))
+n134 <- sum(full %in% unique(A) & full %in% unique(C) & full %in% unique(D))
+n234 <- sum(full %in% unique(B) & full %in% unique(C) & full %in% unique(D))
+n1234 <- sum(full %in% unique(A) & full %in% unique(B) & full %in% unique(C) & full %in% unique(D))
+
+venn.plot2 <- draw.quad.venn(area1=length((A)),
+                             area2=length((B)),
+                             area3=length((C)),
+                             area4=length((D)),
+                             n12,n13,n14,n23,n24,n34,n123,n124,n134,n234,n1234,
+                             category = c("Fruit","Leaf","Pneumatophore","Sediment"),
+                             fill=pal)
+dev.off()
+png("./Output/Figs/VennDiagram_Shared_Spp-Level_Taxa_by_Structure.png")
+grid.draw(venn.plot2)
+dev.off()
