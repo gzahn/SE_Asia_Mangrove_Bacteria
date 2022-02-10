@@ -1,9 +1,9 @@
 plot_bar2 <- function (physeq, x = "Sample", y = "Abundance", fill = NULL, 
-          title = NULL, facet_grid = NULL) 
+          title = NULL, facet_grid = NULL,width = 0.9) 
 {
   mdf = psmelt(physeq)
   p = ggplot(mdf, aes_string(x = x, y = y, fill = fill))
-  p = p + geom_bar(stat = "identity", position = "stack")
+  p = p + geom_bar(stat = "identity", position = "stack",width = width)
   p = p + theme(axis.text.x = element_text(angle = -90, hjust = 0))
   if (!is.null(facet_grid)) {
     p <- p + facet_grid(facet_grid)

@@ -52,12 +52,70 @@ man
 sink(NULL)
 
 
+
+
+
 # Beta-diversity distances and ordinations ####
 set.seed(123)
 unifrac.dist <- UniFrac(ps_genus,weighted = TRUE,normalized = TRUE,parallel = TRUE)
 
-glimpse(sample_data(ps_genus))
-ps_genus@sam_data$Structure %>% unique()
+# Heatmaps of weighted unifrac distances
+Salba_unifrac.dist <- ps_genus %>% 
+  subset_samples(Species == "Sonneratia alba") %>% 
+  UniFrac(weighted = TRUE,normalized = TRUE,parallel = TRUE)
+
+Aalba_unifrac.dist <- ps_genus %>% 
+  subset_samples(Species == "Avicennia alba") %>% 
+  UniFrac(weighted = TRUE,normalized = TRUE,parallel = TRUE)
+
+Aalba_names_df <- 
+data.frame(sampleid = Aalba_unifrac.dist %>% 
+             as.matrix() %>% 
+             colnames(),
+           host="A. alba") %>% 
+  mutate(structure = sampleid %>% str_split("_") %>% map_chr(3),
+         island = sampleid %>% str_split("_") %>% map_chr(2))
+
+Salba_names_df <- 
+  data.frame(sampleid = Salba_unifrac.dist %>% 
+               as.matrix() %>% 
+               colnames(),
+             host="S. alba") %>% 
+  mutate(structure = sampleid %>% str_split("_") %>% map_chr(3),
+         island = sampleid %>% str_split("_") %>% map_chr(1))
+
+names_df <- full_join(Aalba_names_df,Salba_names_df) %>% 
+  mutate(color=case_when(structure == "Fr" ~ pal[1],
+                         structure == "Le" ~ pal[2],
+                         structure == "Pn" ~ pal[3],
+                         structure == "So" ~ pal[4]))
+names_df %>% 
+  filter(host=="A. alba") %>% 
+  pull(color)
+
+Aalba_unifrac.dist %>% as.matrix() %>% heatmap(ColSideColors = names_df %>% 
+                                                 filter(host=="A. alba") %>% 
+                                                 pull(color),
+                                               RowSideColors = names_df %>% 
+                                                 filter(host=="A. alba") %>% 
+                                                 pull(color),
+                                              keep.dendro = FALSE,
+                                              scale = "none",
+                                              col=gray.colors(20),main = "A. alba")
+# export
+
+Salba_unifrac.dist %>% as.matrix() %>% heatmap(ColSideColors = names_df %>% 
+                                                 filter(host=="S. alba") %>% 
+                                                 pull(color),
+                                               RowSideColors = names_df %>% 
+                                                 filter(host=="S. alba") %>% 
+                                                 pull(color),
+                                               keep.dendro = FALSE,
+                                               scale = "none",
+                                               col=gray.colors(20),main = "S. alba")
+# export
+
+
 set.seed(123)
 ordu <- ps_genus %>% 
   transform_sample_counts(function(x){x/sum(x)}) %>% 

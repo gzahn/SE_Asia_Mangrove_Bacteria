@@ -62,6 +62,67 @@ anova(richness_mod)
 sink(NULL)
 
 
+# Stacked phylum-level barcharts (horizontal) by host and structure ####
+
+# merge samples
+ps_genus@sam_data %>% names()
+ps_genus@otu_table %>% rowSums()
+newmergevar <- paste(ps_genus@sam_data$Species,
+                     ps_genus@sam_data$Location,
+                     ps_genus@sam_data$Structure,
+                     sep = "_")
+ps_genus@sam_data$newmergevar <- newmergevar
+
+psm_ra <- ps_genus %>%   
+  merge_samples(newmergevar,fun = "sum") %>% 
+  transform_sample_counts(function(x){x/sum(x)})
+
+# repair metadata
+sp <- psm_ra@sam_data %>% row.names() %>% str_split("_") %>% map_chr(1)
+lo <- psm_ra@sam_data %>% row.names() %>% str_split("_") %>% map_chr(2)
+st <- psm_ra@sam_data %>% row.names() %>% str_split("_") %>% map_chr(3)
+psm_ra@sam_data$Species <- sp
+psm_ra@sam_data$Location <- lo
+psm_ra@sam_data$Structure <- st
+
+aa_plot <- psm_ra %>% 
+  subset_samples(Species == "Avicennia alba") %>% 
+  plot_bar2(x="Location",fill="Phylum",facet_grid = ~Structure) +
+  coord_flip() +
+  theme_minimal() +
+  theme(strip.text = element_text(face="bold",size=8,margin = margin(c(5,10,5,10))),
+        axis.text.x = element_text(face="bold",size=8,angle=90,hjust=1,vjust=.5),
+        axis.text.y = element_text(face="bold",size=10),
+        axis.title = element_text(face="bold",size=12),
+        legend.title = element_text(face="bold",size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(face="bold.italic",size=14,hjust=.5),
+        legend.position = "none",
+        plot.margin = margin(r=20)) +
+  scale_fill_viridis_d() +
+  scale_y_continuous(breaks=c(0,.5,1)) +
+  labs(y="\nRelative abundance",title = "Avicennia alba")
+
+sa_plot <- psm_ra %>% 
+  subset_samples(Species == "Sonneratia alba") %>% 
+  plot_bar2(x="Location",fill="Phylum",facet_grid = ~Structure) +
+  coord_flip() +
+  theme_minimal() +
+  theme(strip.text = element_text(face="bold",size=8,margin = margin(c(5,-20,5,-20))),
+        axis.text.x = element_text(face="bold",size=8,angle=90,hjust=1,vjust=.5),
+        axis.text.y = element_blank(),
+        axis.title.x = element_text(face="bold",size=12),
+        axis.title.y = element_blank(),
+        legend.title = element_text(face="bold",size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(face="bold.italic",size=14,hjust=.5)) +
+  scale_fill_viridis_d() +
+  scale_y_continuous(breaks=c(0,.5,1)) +
+  labs(y="\nRelative abundance",title = "Sonneratia alba")
+
+aa_plot + sa_plot
+ggsave("./Output/Figs/horizontal_bar_charts.png",dpi=400,width = 16,height = 8)
+
 # Plot alpha diversity ####
 plot_richness(ps_genus, x="Structure", measures=c("Shannon")) +
   geom_boxplot(alpha=0.5,aes(fill=Structure)) +
