@@ -9,8 +9,8 @@ Mantel statistic r: 0.1097
       Significance: 0.001 
 
 Upper quantiles of permutations (null model):
-   90%    95%  97.5%    99% 
-0.0101 0.0124 0.0158 0.0188 
+    90%     95%   97.5%     99% 
+0.00981 0.01223 0.01431 0.01611 
 Permutation: free
 Number of permutations: 999
 

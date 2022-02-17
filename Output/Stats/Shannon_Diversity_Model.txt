@@ -2,44 +2,53 @@ Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmer
 Formula: Shannon ~ Species * Structure * (1 | Location)
    Data: meta
 
-REML criterion at convergence: 881.8
+REML criterion at convergence: 888.7
 
 Scaled residuals: 
     Min      1Q  Median      3Q     Max 
--3.4710 -0.5804  0.0567  0.6804  2.4662 
+-3.4723 -0.5816  0.0623  0.6745  2.4641 
 
 Random effects:
  Groups   Name        Variance Std.Dev.
- Location (Intercept) 0.02351  0.1533  
- Residual             0.36116  0.6010  
-Number of obs: 469, groups:  Location, 10
+ Location (Intercept) 0.02477  0.1574  
+ Residual             0.36192  0.6016  
+Number of obs: 472, groups:  Location, 10
 
 Fixed effects:
-                                               Estimate Std. Error        df t value Pr(>|t|)    
-(Intercept)                                     2.20115    0.08947  41.18507  24.602  < 2e-16 ***
-SpeciesSonneratia alba                          0.80082    0.09939 452.78742   8.058 6.97e-15 ***
-StructureFruit                                 -1.22814    0.10671 451.80229 -11.509  < 2e-16 ***
-StructureLeaf                                  -1.06532    0.10526 451.50198 -10.121  < 2e-16 ***
-StructurePneumatophore                         -0.45565    0.10233 451.00910  -4.453 1.07e-05 ***
-SpeciesSonneratia alba:StructureFruit          -1.12475    0.18979 458.01683  -5.926 6.10e-09 ***
-SpeciesSonneratia alba:StructureLeaf           -1.22238    0.21450 456.63638  -5.699 2.17e-08 ***
-SpeciesSonneratia alba:StructurePneumatophore  -0.41475    0.13600 450.98041  -3.050  0.00243 ** 
+                                               Estimate Std. Error        df t value Pr(>|t|)
+(Intercept)                                     2.19868    0.09027  40.03870  24.356  < 2e-16
+SpeciesSonneratia alba                          0.80411    0.09954 456.67244   8.078 5.92e-15
+StructureFruit                                 -1.24762    0.10631 454.57451 -11.736  < 2e-16
+StructureLeaf                                  -1.06532    0.10537 454.47217 -10.110  < 2e-16
+StructurePneumatophore                         -0.45546    0.10243 453.99572  -4.446 1.10e-05
+SpeciesSonneratia alba:StructureFruit          -1.12265    0.18708 461.43447  -6.001 3.97e-09
+SpeciesSonneratia alba:StructureLeaf           -1.25336    0.20949 460.57726  -5.983 4.40e-09
+SpeciesSonneratia alba:StructurePneumatophore  -0.41493    0.13615 453.96841  -3.048  0.00244
+                                                 
+(Intercept)                                   ***
+SpeciesSonneratia alba                        ***
+StructureFruit                                ***
+StructureLeaf                                 ***
+StructurePneumatophore                        ***
+SpeciesSonneratia alba:StructureFruit         ***
+SpeciesSonneratia alba:StructureLeaf          ***
+SpeciesSonneratia alba:StructurePneumatophore ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
             (Intr) SpcsSa StrctF StrctL StrctP SSa:SF SSa:SL
-SpcsSnnrtal -0.643                                          
-StructurFrt -0.547  0.491                                   
-StructureLf -0.556  0.499  0.467                            
-StrctrPnmtp -0.572  0.515  0.479  0.486                     
-SpcsSalb:SF  0.281 -0.463 -0.561 -0.262 -0.269              
-SpcsSalb:SL  0.272 -0.433 -0.228 -0.488 -0.238  0.228       
-SpcsSalb:SP  0.430 -0.684 -0.361 -0.366 -0.752  0.358  0.317
+SpcsSnnrtal -0.639                                          
+StructurFrt -0.546  0.494                                   
+StructureLf -0.551  0.499  0.470                            
+StrctrPnmtp -0.567  0.515  0.482  0.486                     
+SpcsSalb:SF  0.282 -0.468 -0.567 -0.266 -0.274              
+SpcsSalb:SL  0.274 -0.440 -0.235 -0.501 -0.244  0.241       
+SpcsSalb:SP  0.427 -0.684 -0.363 -0.366 -0.752  0.364  0.325
 Type III Analysis of Variance Table with Satterthwaite's method
                    Sum Sq Mean Sq NumDF  DenDF  F value    Pr(>F)    
-Species             0.730   0.730     1 349.12   2.0207    0.1561    
-Structure         176.684  58.895     3 456.38 163.0704 < 2.2e-16 ***
-Species:Structure  19.892   6.631     3 455.98  18.3598 2.916e-11 ***
+Species             0.693   0.693     1 338.12   1.9147    0.1674    
+Structure         185.204  61.735     3 459.88 170.5736 < 2.2e-16 ***
+Species:Structure  20.969   6.990     3 459.54  19.3130 8.252e-12 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

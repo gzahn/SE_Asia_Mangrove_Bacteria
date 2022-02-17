@@ -44,18 +44,6 @@ plot_core(prevalences = prevalences,
 
 
 
-# Also define color palette
-virid <- viridis::viridis(10)
-
-
-  #Adjusts axis text size and legend bar height
-  theme(axis.text.y= element_text(size=8, face="italic"),
-        axis.text.x.bottom=element_text(size=8),
-        axis.title = element_text(size=10),
-        legend.text = element_text(size=8),
-        legend.title = element_text(size=10))
-print(p)
-
 
 # find core microbiome members overall
 overall_core_taxa <- core_members(ps_genus,
