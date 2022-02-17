@@ -127,32 +127,37 @@ ggplot(aes(x=Sample,y=OTU,fill=Abundance)) +
   labs(y="Taxon",fill="Relative\nabundance")
 ggsave("./Output/Figs/Core_Heatmap_by_Structure.png",dpi=400,height = 8,width = 12)
 
+aa_heatmap <- psm %>% 
+  filter(sample_Species == "Avicennia alba") %>% 
+  ggplot(aes(x=Sample,y=OTU,fill=Abundance)) +
+  geom_tile() +
+  facet_grid(cols = vars(Structure),
+             scales = 'free') +
+  theme_minimal() +
+  labs(y="Taxon",fill="Relative\nabundance",title = "Avicennia alba") +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(face="bold",size=14),
+        axis.text.y = element_text(size=5),
+        plot.title = element_text(face="italic",size=14,hjust=.5),
+        legend.position = 'none') +
+  scale_fill_viridis_c() 
 
-p <- plot_heatmap(physeq = ps_genus_all_core %>% 
-               transform_sample_counts(function(x){x/sum(x)}),
-               sample.order = sampleorder,
-             distance = "bray",TRUE,na.rm=TRUE) +
-  theme(axis.text.x = element_text(angle=90,hjust = 1))
-#
-p$labels
+sa_heatmap <- psm %>% 
+  filter(sample_Species == "Sonneratia alba") %>% 
+  ggplot(aes(x=Sample,y=OTU,fill=Abundance)) +
+  geom_tile() +
+  facet_grid(cols = vars(Structure),
+             scales = 'free') +
+  theme_minimal() +
+  labs(y="Taxon",fill="Relative\nabundance",title = "Sonneratia alba") +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(face="bold",size=14),
+        axis.text.y = element_blank(),
+        plot.title = element_text(face="italic",size=14,hjust=.5),
+        axis.title.y = element_blank()) +
+  scale_fill_viridis_c() 
 
-
-
-
-
-
-#
-
-
-
-
-
-
-ps_genus_all_core %>% 
-  transform_sample_counts(function(x){x/sum(x)}) %>% 
-plot_heatmap(FALSE,sample.order = "Structure",distance = "unifrac") +
-  theme(axis.text.x = element_text(angle=90,hjust=1))
-# facet_wrap(~ps_genus_all_core@sam_data$Structure)
-
-
-plot_heatmap
+aa_heatmap + sa_heatmap
+ggsave("./Output/Figs/Core_Heatmap_by_Structure_and_Host.png",dpi = 400,height = 8,width = 16)
