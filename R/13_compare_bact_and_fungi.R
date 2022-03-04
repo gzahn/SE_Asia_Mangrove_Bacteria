@@ -80,6 +80,14 @@ p2 <- plot_ordination(fung,fung_ord,color="Structure") +
 p1 + p2
 
 
+# Best disper
+
+vegan::betadisper(vegan::vegdist(otu_table(full_ra %>% subset_samples(Microbe == "Bacteria"))),group=sam_data(full_ra %>% subset_samples(Microbe == "Bacteria"))$Structure ) %>% plot()
+vegan::betadisper(vegan::vegdist(otu_table(full_ra %>% subset_samples(Microbe == "Fungi"))),group=sam_data(full_ra %>% subset_samples(Microbe == "Fungi"))$Structure ) %>% plot()
+
+
+
+
 # models
 asv <- full_ra@otu_table %>% as.matrix() %>% as.data.frame()
 structure <- full_ra@sam_data$Structure

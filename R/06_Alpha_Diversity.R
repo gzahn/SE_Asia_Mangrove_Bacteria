@@ -110,7 +110,7 @@ sa_plot <- psm_ra %>%
   theme_minimal() +
   theme(strip.text = element_text(face="bold",size=8,margin = margin(c(5,-20,5,-20))),
         axis.text.x = element_text(face="bold",size=8,angle=90,hjust=1,vjust=.5),
-        axis.text.y = element_blank(),
+        axis.text.y = element_text(face="bold",size=10),
         axis.title.x = element_text(face="bold",size=12),
         axis.title.y = element_blank(),
         legend.title = element_text(face="bold",size=12),
